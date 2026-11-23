@@ -1,0 +1,45 @@
+plugins { id 'com.android.application' }
+
+android {
+    namespace 'de.tillblack.updater'
+    compileSdk 35
+
+    defaultConfig {
+        applicationId 'de.tillblack.updater'
+        minSdk 26
+        targetSdk 35
+        versionCode 1
+        versionName '1'
+    }
+
+    // Der Signierschlüssel liegt passwortgeschützt im Repo.
+    // Das Passwort kommt aus dem GitHub-Secret KEYSTORE_PASSWORD und steht nirgends im Code.
+    signingConfigs {
+        release {
+            storeFile file('updater.p12')
+            storeType 'pkcs12'
+            storePassword((System.getenv('KEYSTORE_PASSWORD') ?: '').trim())
+            keyAlias 'updater'
+            keyPassword((System.getenv('KEYSTORE_PASSWORD') ?: '').trim())
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            signingConfig signingConfigs.release
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+        encoding 'UTF-8'
+    }
+
+    lint {
+        checkReleaseBuilds false
+        abortOnError false
+    }
+}
+
